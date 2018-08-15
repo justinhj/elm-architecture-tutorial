@@ -1,6 +1,7 @@
 module RomanConvert exposing (..)
 
 import Dict exposing (Dict, fromList)
+import List.Extra exposing (find)
 import Set exposing (..)
 
 
@@ -12,15 +13,6 @@ import Set exposing (..)
 validChars : Set Char
 validChars =
     Set.fromList [ 'I', 'V', 'X', 'L', 'C', 'D', 'M' ]
-
-
-
--- True if c is a valid Roman Numeral character
-
-
-validRomanChar : Char -> Bool
-validRomanChar c =
-    member c validChars
 
 
 
@@ -43,6 +35,7 @@ vm =
 
 -- Convert a string of input roman numerals and return the integer value
 -- or zero if no valid integer was found
+-- Invalid Roman numeral characters are simply ignored
 
 
 romanNumeralsToDecimal : String -> Int
@@ -104,3 +97,51 @@ pairUpHelper default n acc =
 pairUp : a -> List a -> List ( a, a )
 pairUp default n =
     pairUpHelper default n [] |> List.reverse
+
+
+
+-- Map of values to Roman Numeral character that represents that value
+
+
+svm : List ( Int, String )
+svm =
+    [ ( 1000, "M" )
+    , ( 900, "CM" )
+    , ( 500, "D" )
+    , ( 350, "LC" )
+    , ( 100, "C" )
+    , ( 90, "XC" )
+    , ( 50, "L" )
+    , ( 40, "XL" )
+    , ( 10, "X" )
+    , ( 9, "IX" )
+    , ( 5, "V" )
+    , ( 4, "IV" )
+    , ( 1, "I" )
+    ]
+
+
+getBiggestNumeralForInt : Int -> Maybe ( Int, String )
+getBiggestNumeralForInt value =
+    find (\( a, b ) -> a <= value) svm
+
+
+validRomanChar : Char -> Bool
+validRomanChar c =
+    member c validChars
+
+
+decimalToRoman : Int -> String -> String
+decimalToRoman r o =
+    if r == 0 then
+        if String.isEmpty o then
+            "0"
+        else
+            o
+    else
+        case getBiggestNumeralForInt r of
+            Just ( v, s ) ->
+                decimalToRoman (r - v) (o ++ s)
+
+            Nothing ->
+                o
