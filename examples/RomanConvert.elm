@@ -4,6 +4,8 @@ import Dict exposing (Dict, fromList)
 import Set exposing (..)
 
 
+-- Elm implementation of converting to and from Integer and a string representation of a Roman Numeral
+-- (C)2018 Justin Heyes-Jones
 -- These are the valid characters that make up Roman Numerals
 
 
@@ -12,9 +14,17 @@ validChars =
     Set.fromList [ 'I', 'V', 'X', 'L', 'C', 'D', 'M' ]
 
 
+
+-- True if c is a valid Roman Numeral character
+
+
 validRomanChar : Char -> Bool
 validRomanChar c =
     member c validChars
+
+
+
+-- Numeric values of each numeral
 
 
 vm : Dict Char Int
@@ -31,7 +41,8 @@ vm =
 
 
 
--- TODO API should probably return Maybe so this is total
+-- Convert a string of input roman numerals and return the integer value
+-- or zero if no valid integer was found
 
 
 romanNumeralsToDecimal : String -> Int
@@ -48,13 +59,11 @@ romanNumeralsToDecimal input =
 
         folded =
             List.foldl
-                (\ab acc ->
-                    case ab of
-                        ( a, b ) ->
-                            if a >= b then
-                                acc + a
-                            else
-                                acc + (b - a) - b
+                (\( a, b ) acc ->
+                    if a >= b then
+                        acc + a
+                    else
+                        acc + (b - a) - b
                 )
                 0
                 paired
@@ -71,11 +80,15 @@ folded s =
         s
 
 
-helper : a -> List a -> List ( a, a ) -> List ( a, a )
-helper default n acc =
+
+-- pairUp, below, uses this function as a recursive helper to do its work
+
+
+pairUpHelper : a -> List a -> List ( a, a ) -> List ( a, a )
+pairUpHelper default n acc =
     case n of
         a :: b :: rest ->
-            helper default (b :: rest) (( a, b ) :: acc)
+            pairUpHelper default (b :: rest) (( a, b ) :: acc)
 
         [ a ] ->
             ( a, default ) :: acc
@@ -84,6 +97,10 @@ helper default n acc =
             acc
 
 
+
+-- This pairs up the values in two lists. If one list is longer the paired value is the default value passed in
+
+
 pairUp : a -> List a -> List ( a, a )
 pairUp default n =
-    helper default n [] |> List.reverse
+    pairUpHelper default n [] |> List.reverse
