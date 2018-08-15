@@ -1,3 +1,5 @@
+-- JHJ presumably .. means exposing everything?
+
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
