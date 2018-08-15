@@ -5,8 +5,11 @@ import List.Extra exposing (find)
 import Set exposing (..)
 
 
--- Elm implementation of converting to and from Integer and a string representation of a Roman Numeral
--- (C)2018 Justin Heyes-Jones
+{- Elm implementation of converting to and from Integer and a string representation of a Roman Numeral
+   (C)2018 Justin Heyes-Jones
+
+
+-}
 -- These are the valid characters that make up Roman Numerals
 
 

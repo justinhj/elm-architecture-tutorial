@@ -3,17 +3,7 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-
-
--- TODO move to module
-
-
-validChars =
-    [ 'I', 'V', 'X', 'L', 'C', 'D', 'M' ]
-
-
-
--- End module
+import RomanConvert exposing (..)
 
 
 main =
