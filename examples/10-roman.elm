@@ -3,7 +3,7 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import RomanConvert exposing (..)
+import RomanConvert exposing (decimalToRoman, romanNumeralsToDecimal)
 
 
 main =
@@ -19,12 +19,16 @@ main =
 
 
 type alias Model =
-    Int
+    { decimal : Int
+    , roman : String
+    }
 
 
 model : Model
 model =
-    0
+    { decimal = 1
+    , roman = "I"
+    }
 
 
 
@@ -32,18 +36,31 @@ model =
 
 
 type Msg
-    = Increment
-    | Decrement
+    = RomanToDecimal
+    | DecimalToRoman
+    | ChangeRoman String
+    | ChangeDecimal String
+
+
+getInt : String -> Int
+getInt s =
+    String.toInt s |> Result.toMaybe |> Maybe.withDefault 0
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Increment ->
-            model + 1
+        RomanToDecimal ->
+            { model | decimal = romanNumeralsToDecimal model.roman }
 
-        Decrement ->
-            model - 1
+        DecimalToRoman ->
+            { model | roman = decimalToRoman model.decimal }
+
+        ChangeRoman new ->
+            { model | roman = new }
+
+        ChangeDecimal new ->
+            { model | decimal = getInt new }
 
 
 
@@ -54,7 +71,15 @@ view : Model -> Html Msg
 view model =
     div []
         [ h2 [] [ text "Roman Numeral Converter" ]
-        , button [ onClick Decrement ] [ text "-" ]
-        , div [] [ text (toString model) ]
-        , button [ onClick Increment ] [ text "+" ]
+        , button [ onClick RomanToDecimal ] [ text "RomanToDecimal" ]
+        , button [ onClick DecimalToRoman ] [ text "DecimalToRoman" ]
+        , div [] [ text (toString model.decimal) ]
+        , div [] [ text model.roman ]
+        , input [ placeholder "Enter Roman numeral", onInput ChangeRoman ] []
+        , input [ placeholder "Enter number", onInput ChangeDecimal ] []
         ]
+
+
+
+--        div [] [ input [placeholder = "Enter roman  numeral", onChange ChangeRoman ] ]
+--        , div [] [ input [placeholder = "Enter decimal", onChange ChangeDecimal ] ]

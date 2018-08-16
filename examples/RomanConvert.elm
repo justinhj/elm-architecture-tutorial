@@ -134,8 +134,13 @@ validRomanChar c =
     member c validChars
 
 
-decimalToRoman : Int -> String -> String
-decimalToRoman r o =
+decimalToRoman : Int -> String
+decimalToRoman r =
+    decimalToRomanHelper r ""
+
+
+decimalToRomanHelper : Int -> String -> String
+decimalToRomanHelper r o =
     if r == 0 then
         if String.isEmpty o then
             "0"
@@ -144,7 +149,7 @@ decimalToRoman r o =
     else
         case getBiggestNumeralForInt r of
             Just ( v, s ) ->
-                decimalToRoman (r - v) (o ++ s)
+                decimalToRomanHelper (r - v) (o ++ s)
 
             Nothing ->
                 o
