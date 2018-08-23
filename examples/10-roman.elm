@@ -1,5 +1,6 @@
-module Main exposing (..)
+module Main exposing (Model, Msg(..), getInt, main, model, update, view)
 
+import Browser exposing (sandbox)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -7,8 +8,8 @@ import RomanConvert exposing (decimalToRoman, romanNumeralsToDecimal)
 
 
 main =
-    Html.beginnerProgram
-        { model = model
+    Browser.sandbox
+        { init = model
         , view = view
         , update = update
         }
@@ -42,11 +43,11 @@ type Msg
 
 getInt : String -> Int
 getInt s =
-    String.toInt s |> Result.toMaybe |> Maybe.withDefault 0
+    String.toInt s |> Maybe.withDefault 0
 
 
 update : Msg -> Model -> Model
-update msg model =
+update msg updatedModel =
     case msg of
         ChangeRoman updated ->
             let
@@ -59,10 +60,10 @@ update msg model =
                 newRoman =
                     decimalToRoman newDecimal
             in
-                { model | roman = newRoman, decimal = newDecimal }
+            { updatedModel | roman = newRoman, decimal = newDecimal }
 
         ChangeDecimal new ->
-            { model | decimal = getInt new, roman = decimalToRoman (getInt new) }
+            { updatedModel | decimal = getInt new, roman = decimalToRoman (getInt new) }
 
 
 
@@ -70,11 +71,11 @@ update msg model =
 
 
 view : Model -> Html Msg
-view model =
+view updatedModel =
     div []
         [ h2 [] [ text "Roman Numeral Converter" ]
         , label [] [ text "Roman numeral" ]
-        , input [ placeholder "Enter Roman numeral", onInput ChangeRoman, value model.roman ] []
+        , input [ placeholder "Enter Roman numeral", onInput ChangeRoman, value updatedModel.roman ] []
         , label [] [ text "Decimal number" ]
-        , input [ placeholder "Enter number", onInput ChangeDecimal, value (toString model.decimal) ] []
+        , input [ placeholder "Enter number", onInput ChangeDecimal, value (String.fromInt updatedModel.decimal) ] []
         ]

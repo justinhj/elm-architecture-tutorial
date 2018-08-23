@@ -1,14 +1,13 @@
-module RomanConvert exposing (..)
+module RomanConvert exposing (decimalToRoman, romanNumeralsToDecimal)
 
 import Dict exposing (Dict, fromList)
 import List.Extra exposing (find)
 import Set exposing (..)
 
 
+
 {- Elm implementation of converting to and from Integer and a string representation of a Roman Numeral
    (C)2018 Justin Heyes-Jones
-
-
 -}
 -- These are the valid characters that make up Roman Numerals
 
@@ -58,6 +57,7 @@ romanNumeralsToDecimal input =
                 (\( a, b ) acc ->
                     if a >= b then
                         acc + a
+
                     else
                         acc + (b - a) - b
                 )
@@ -67,16 +67,14 @@ romanNumeralsToDecimal input =
     folded
 
 
-folded s =
-    String.foldl
-        (\b acc ->
-            acc + Maybe.withDefault 0 (Dict.get b vm)
-        )
-        0
-        s
 
-
-
+-- folded s =
+--     String.foldl
+--         (\b acc ->
+--             acc + Maybe.withDefault 0 (Dict.get b vm)
+--         )
+--         0
+--         s
 -- pairUp, below, uses this function as a recursive helper to do its work
 
 
@@ -144,8 +142,10 @@ decimalToRomanHelper r o =
     if r == 0 then
         if String.isEmpty o then
             "0"
+
         else
             o
+
     else
         case getBiggestNumeralForInt r of
             Just ( v, s ) ->
