@@ -48,8 +48,18 @@ getInt s =
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        ChangeRoman new ->
-            { model | roman = new, decimal = romanNumeralsToDecimal new }
+        ChangeRoman updated ->
+            let
+                updatedToUpper =
+                    String.toUpper updated
+
+                newDecimal =
+                    romanNumeralsToDecimal updatedToUpper
+
+                newRoman =
+                    decimalToRoman newDecimal
+            in
+                { model | roman = newRoman, decimal = newDecimal }
 
         ChangeDecimal new ->
             { model | decimal = getInt new, roman = decimalToRoman (getInt new) }
