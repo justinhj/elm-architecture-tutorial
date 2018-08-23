@@ -27,9 +27,23 @@ type alias Model =
 
 model : Model
 model =
-    { decimal = 1
-    , roman = "I"
+    { decimal = 0
+    , roman = ""
     }
+
+
+
+-- If the decimal is non-zero return empty string otherwise return the decimal as a string
+
+
+displayDecimal : Int -> String
+displayDecimal d =
+    case d of
+        0 ->
+            ""
+
+        n ->
+            String.fromInt n
 
 
 
@@ -77,5 +91,5 @@ view updatedModel =
         , label [] [ text "Roman numeral" ]
         , input [ placeholder "Enter Roman numeral", onInput ChangeRoman, value updatedModel.roman ] []
         , label [] [ text "Decimal number" ]
-        , input [ placeholder "Enter number", onInput ChangeDecimal, value (String.fromInt updatedModel.decimal) ] []
+        , input [ placeholder "Enter number", onInput ChangeDecimal, value (displayDecimal updatedModel.decimal) ] []
         ]
