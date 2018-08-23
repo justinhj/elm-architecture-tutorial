@@ -36,9 +36,7 @@ model =
 
 
 type Msg
-    = RomanToDecimal
-    | DecimalToRoman
-    | ChangeRoman String
+    = ChangeRoman String
     | ChangeDecimal String
 
 
@@ -50,17 +48,11 @@ getInt s =
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        RomanToDecimal ->
-            { model | decimal = romanNumeralsToDecimal model.roman }
-
-        DecimalToRoman ->
-            { model | roman = decimalToRoman model.decimal }
-
         ChangeRoman new ->
-            { model | roman = new }
+            { model | roman = new, decimal = romanNumeralsToDecimal new }
 
         ChangeDecimal new ->
-            { model | decimal = getInt new }
+            { model | decimal = getInt new, roman = decimalToRoman (getInt new) }
 
 
 
@@ -71,15 +63,8 @@ view : Model -> Html Msg
 view model =
     div []
         [ h2 [] [ text "Roman Numeral Converter" ]
-        , button [ onClick RomanToDecimal ] [ text "RomanToDecimal" ]
-        , button [ onClick DecimalToRoman ] [ text "DecimalToRoman" ]
-        , div [] [ text (toString model.decimal) ]
-        , div [] [ text model.roman ]
-        , input [ placeholder "Enter Roman numeral", onInput ChangeRoman ] []
-        , input [ placeholder "Enter number", onInput ChangeDecimal ] []
+        , label [] [ text "Roman numeral" ]
+        , input [ placeholder "Enter Roman numeral", onInput ChangeRoman, value model.roman ] []
+        , label [] [ text "Decimal number" ]
+        , input [ placeholder "Enter number", onInput ChangeDecimal, value (toString model.decimal) ] []
         ]
-
-
-
---        div [] [ input [placeholder = "Enter roman  numeral", onChange ChangeRoman ] ]
---        , div [] [ input [placeholder = "Enter decimal", onChange ChangeDecimal ] ]
