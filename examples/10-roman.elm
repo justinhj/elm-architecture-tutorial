@@ -1,6 +1,6 @@
-module Main exposing (Model, Msg(..), getInt, main, model, update, view)
+module Main exposing (Model, Msg(..), displayDecimal, getInt, init, main, update, view)
 
-import Browser exposing (sandbox)
+import Browser exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -8,10 +8,11 @@ import RomanConvert exposing (decimalToRoman, romanNumeralsToDecimal)
 
 
 main =
-    Browser.sandbox
-        { init = model
+    Browser.document
+        { init = init
         , view = view
         , update = update
+        , subscriptions = subscriptions
         }
 
 
@@ -25,11 +26,18 @@ type alias Model =
     }
 
 
-model : Model
-model =
-    { decimal = 0
-    , roman = ""
-    }
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
+
+
+init : () -> ( Model, Cmd Msg )
+init _ =
+    ( { decimal = 0
+      , roman = ""
+      }
+    , Cmd.none
+    )
 
 
 
@@ -60,7 +68,7 @@ getInt s =
     String.toInt s |> Maybe.withDefault 0
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg updatedModel =
     case msg of
         ChangeRoman updated ->
@@ -74,22 +82,31 @@ update msg updatedModel =
                 newRoman =
                     decimalToRoman newDecimal
             in
-            { updatedModel | roman = newRoman, decimal = newDecimal }
+            ( { updatedModel | roman = newRoman, decimal = newDecimal }, Cmd.none )
 
         ChangeDecimal new ->
-            { updatedModel | decimal = getInt new, roman = decimalToRoman (getInt new) }
+            ( { updatedModel | decimal = getInt new, roman = decimalToRoman (getInt new) }, Cmd.none )
 
 
 
 -- VIEW
 
 
-view : Model -> Html Msg
+view : Model -> Browser.Document Msg
 view updatedModel =
-    div []
-        [ h2 [] [ text "Roman Numeral Converter" ]
-        , label [] [ text "Roman numeral" ]
-        , input [ placeholder "Enter Roman numeral", onInput ChangeRoman, value updatedModel.roman ] []
-        , label [] [ text "Decimal number" ]
-        , input [ placeholder "Enter number", onInput ChangeDecimal, value (displayDecimal updatedModel.decimal) ] []
+    { title = "Roman title"
+    , body =
+        [ div [ class "container" ]
+            [ h2 [] [ text "Roman Numeral Converters" ]
+            , label [] [ text "Roman numeral" ]
+            , input [ placeholder "Enter Roman numeral", onInput ChangeRoman, value updatedModel.roman ] []
+            , label [] [ text "Decimal number" ]
+            , input [ placeholder "Enter number", onInput ChangeDecimal, value (displayDecimal updatedModel.decimal) ] []
+            , div [ class "container" ]
+                [ text "See the source code on github "
+                , a [ href "http://github.com/justinhj/cljs-roman" ]
+                    [ text "github.com/justinhj/cljs-roman" ]
+                ]
+            ]
         ]
+    }
